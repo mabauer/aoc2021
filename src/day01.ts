@@ -12,40 +12,6 @@ function part1(lines : string[]) {
     return result;
 }
 
-declare global {
-    interface Array<T> {
-        reduce_pairs<U>( reducerFunction: (result: U, prev: T, current: T) => U, initialValue : U) : U ;
-    }
-}
-  
-if (!Array.prototype.reduce_pairs) {
-    Array.prototype.reduce_pairs = function<T, U>(this: T[], 
-            reducerFunction: (result: U, prev: T, current: T) => U, initialValue : U) : U {
-        if (this.length < 2)
-            return initialValue;
-        let result = initialValue;
-        let prev = this[0];
-        let pos = 1;
-        while (pos < this.length) {
-            let current = this[pos];
-            result = reducerFunction(result, prev, current);
-            pos = pos + 1;
-            prev = current;
-        } 
-        return result;
-    }
-}
-
-
-function part1b(lines : string[]) {
-    let ints = integers(lines);
-    return ints.reduce_pairs((result, prev, current) => {
-        if (prev < current)
-            result += 1;
-        return result;
-    }, 0)
-}
-
 function part2(lines : string[]) {
     let ints = integers(lines)
     let result = 0;
@@ -68,4 +34,4 @@ async function main() {
 
 main();
 
-export { part1, part2, part1b };
+export { part1, part2 };
