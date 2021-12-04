@@ -60,30 +60,16 @@ function compute_rating(lines : string[], strategy=STRATEGY.MOST_COMMON) {
         // console.log(`ones: ${ones.length}`);
         // console.log(`zeros: ${zeros.length}`);
         const temp = []
-        if (strategy == STRATEGY.MOST_COMMON) {
-            if (ones.length >= zeros.length) {
-                // keep ones
-                for (let one of ones) {
-                    temp.push(remaining[one]);
-                }
+        if ((strategy == STRATEGY.MOST_COMMON) == (ones.length >= zeros.length)) {
+            // keep ones
+            for (let one of ones) {
+                temp.push(remaining[one]);
             }
-            else {
-                // keep zeros
-                for (let zero of zeros) {
-                    temp.push(remaining[zero]);
-                }
-            }
-        } else {
-            if (ones.length >= zeros.length) {
-                // keep zeros
-                for (let zero of zeros) {
-                    temp.push(remaining[zero]);
-                }
-            } else {
-                // keep ones
-                for (let one of ones) {
-                    temp.push(remaining[one]);
-                }       
+        }
+        else {
+            // keep zeros
+            for (let zero of zeros) {
+                temp.push(remaining[zero]);
             }
         }
         remaining = temp;
