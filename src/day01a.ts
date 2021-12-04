@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { read_inputfile, integers } from './utils'
+import { integers } from './utils'
 
 declare global {
     interface Array<T> {
@@ -30,13 +30,5 @@ function part1(lines : string[]) {
         return result;
     })
 }
-
-async function main() {
-    const lines = await read_inputfile("input01.txt")
-    const result1 = part1(lines);
-    console.log(`The answer for part one is: ${result1}`)  
-}
-
-main();
 
 export { part1 };
