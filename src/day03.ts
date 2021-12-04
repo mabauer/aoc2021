@@ -59,32 +59,34 @@ function compute_rating(lines : string[], strategy=STRATEGY.MOST_COMMON) {
             .filter(elem => (elem >= 0));
         // console.log(`ones: ${ones.length}`);
         // console.log(`zeros: ${zeros.length}`);
+        const temp = []
         if (strategy == STRATEGY.MOST_COMMON) {
             if (ones.length >= zeros.length) {
-                // remove zeros from remaining
-                for (let zero of zeros.reverse()) {
-                    remaining.splice(zero, 1);
+                // keep ones
+                for (let one of ones) {
+                    temp.push(remaining[one]);
                 }
             }
             else {
-                // remove ones from remaining
-                for (let one of ones.reverse()) {
-                    remaining.splice(one, 1);
+                // keep zeros
+                for (let zero of zeros) {
+                    temp.push(remaining[zero]);
                 }
             }
         } else {
             if (ones.length >= zeros.length) {
-                // remove ones from remaining
-                for (let one of ones.reverse()) {
-                    remaining.splice(one, 1);
+                // keep zeros
+                for (let zero of zeros) {
+                    temp.push(remaining[zero]);
                 }
             } else {
-                // remove zeros from the remaining
-                for (let zero of zeros.reverse()) {
-                    remaining.splice(zero, 1);
-                }               
+                // keep ones
+                for (let one of ones) {
+                    temp.push(remaining[one]);
+                }       
             }
         }
+        remaining = temp;
         // console.log(remaining);
         if (remaining.length == 1)
             break;
