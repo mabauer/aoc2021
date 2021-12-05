@@ -1,5 +1,5 @@
-
-class Coordinates {
+const CANVAS_SIZE = 1000;
+class Point {
     x : number;
     y : number;
     constructor(x: number, y: number) {
@@ -7,7 +7,6 @@ class Coordinates {
         this.y = y;
     }
 }
-
 class Canvas {
 
     private cells: number[][];
@@ -35,29 +34,34 @@ class Canvas {
         this.cells[y][x] = value;
     }
 
-    drawLine(line: Coordinates[]) {
+    drawLine(line: Point[], diagonals=false) {
         const origin = line[0];
         const dest = line[1];
-        if (origin.x == dest.x) {
-            const x = origin.x;
-            const dy = (origin.y > dest.y)? -1 : 1;
-            let y = origin.y;
-            while (y != dest.y) {
-                this.setxy(x, y, this.getxy(x, y) + 1);
-                y += dy;
-            }
-            this.setxy(x, dest.y, this.getxy(x, dest.y) + 1);
-
+        const deltax = dest.x-origin.x;
+        const deltay = dest.y-origin.y;
+        let dx = 0;
+        let dy = 0;
+        if (deltax == 0) {
+            dx = 0;
+            dy = (deltay > 0)? 1 : -1;
         }
-        if (origin.y == dest.y) {
-            const y = origin.y;
-            const dx = (origin.x > dest.x)? -1 : 1;
+        if (deltay == 0) {
+            dx = (deltax > 0)? 1 : -1;;
+            dy = 0;
+        }
+        if (diagonals && (Math.abs(deltax) == Math.abs(deltay))) {
+            dx = (deltax > 0)? 1 : -1;
+            dy = (deltay > 0)? 1 : -1;
+        }
+        if (dx != 0 || dy != 0) {
             let x = origin.x;
-            while (x != dest.x) {
+            let y = origin.y;
+            while (x != dest.x || y != dest.y ) {
                 this.setxy(x, y, this.getxy(x, y) + 1);
                 x += dx;
+                y += dy;
             }
-            this.setxy(dest.x, y, this.getxy(dest.x, y) + 1);
+            this.setxy(x, y, this.getxy(x, y) + 1);
         }
     }
 
@@ -86,12 +90,12 @@ class Canvas {
     }
 }
 
-function parseLine(s : string) : Coordinates[] {
+function parseLine(s : string) : Point[] {
     const re = /(\d+),(\d+)\s*\-\>\s*(\d+),(\d+)/;
     const matches = re.exec(s);
     if (matches && matches.length == 5) {
         const values = matches.map(s => parseInt(s));
-        const result = [ new Coordinates(values[1], values[2]), new Coordinates(values[3], values[4])];
+        const result = [ new Point(values[1], values[2]), new Point(values[3], values[4])];
         // console.log(result);
         return result;
     }
@@ -100,9 +104,9 @@ function parseLine(s : string) : Coordinates[] {
 
 function part1(lines : string[]) {
     lines = lines.filter(l => l.length > 0);
-    const seamap = new Canvas(1000, 1000);
+    const seamap = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
     for (let s of lines) {
-        const line: Coordinates[] = parseLine(s);
+        const line: Point[] = parseLine(s);
         if (line && line.length == 2)
             seamap.drawLine(line);
     }
@@ -112,7 +116,16 @@ function part1(lines : string[]) {
 }
 
 function part2(lines : string[]) {
-    return 0;
+    lines = lines.filter(l => l.length > 0);
+    const seamap = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+    for (let s of lines) {
+        const line: Point[] = parseLine(s);
+        if (line && line.length == 2)
+            seamap.drawLine(line, true);
+    }
+    // console.log(seamap.toString());
+    const result = seamap.countCells(value => value >= 2);
+    return result;
 }
 
-export { part1, part2 };
+export { part1, part2, parseLine, Point };
