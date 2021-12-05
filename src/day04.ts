@@ -10,7 +10,7 @@ class Board {
         return this.cells[y][x];
     }
 
-    winningSequence(numbers_drawn : Set<number>) {
+    winningRowOrColumn(numbers_drawn : Set<number>) {
         const size = this.cells.length
         let result = [];
         for (let y = 0; y < size; y++) {
@@ -45,6 +45,12 @@ class Board {
         } 
         return [];
     }
+
+    wins(numbers_drawn : Set<number>) {
+        const winning_sequence = this.winningRowOrColumn(numbers_drawn);
+        return (winning_sequence && winning_sequence.length > 0);
+    }
+
     score(numbers_drawn : Set<number>) : number {
         const size = this.cells.length
         let sum = 0;
@@ -81,8 +87,7 @@ function play_part1(boards: Board[], numbers_to_draw: number[]) : number {
     for (let num of numbers_to_draw) {
         numbers_drawn.add(num);
         for (let board of boards) {
-            const winning_sequence : number[] = board.winningSequence(numbers_drawn);
-            if (winning_sequence && winning_sequence.length > 0) {
+            if (board.wins(numbers_drawn)) {
                 return num * board.score(numbers_drawn);
             }
         }
@@ -99,23 +104,22 @@ function part1(lines : string[]) {
 }
 
 function play_part2(boards: Board[], numbers_to_draw: number[]) : number {
-    let remaining_boards = [...boards];
-    let winning_boards : Board[] = [];
+    let boards_remaining = [...boards];
+    let boards_won : Board[] = [];
     let last_winning_round = 0;
     for (let round = 0; round < numbers_to_draw.length; round++) {
-        for (let board of remaining_boards) {
-            const winning_squence : number[] = board.winningSequence(new Set(numbers_to_draw.slice(0, round+1)));
-            if (winning_squence && winning_squence.length > 0) {
+        for (let board of boards_remaining) {
+            if (board.wins(new Set(numbers_to_draw.slice(0, round+1)))) {
                 last_winning_round = round;
-                winning_boards.push(board);
+                boards_won.push(board);
             }
         }
         // console.log(`${numbers_to_draw[round]} drawn: ${remaining_boards.length}`);
-        remaining_boards = remaining_boards.filter(b => !winning_boards.includes(b));
-        if (remaining_boards.length == 0)
+        boards_remaining = boards_remaining.filter(b => !boards_won.includes(b));
+        if (boards_remaining.length == 0)
             break;
     }
-    const last_board = winning_boards[winning_boards.length-1];
+    const last_board = boards_won[boards_won.length-1];
     const last_winning_number = numbers_to_draw[last_winning_round]
     // console.log(last_winning_number);
     // console.log(last_board);
