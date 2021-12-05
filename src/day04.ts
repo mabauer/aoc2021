@@ -68,7 +68,7 @@ function createBoards(lines: string[]) {
             rows.push(row);
         }
         else {
-            console.log(rows);
+            // console.log(rows);
             boards.push(new Board(rows));
             rows = [];
         }
@@ -76,13 +76,13 @@ function createBoards(lines: string[]) {
     return boards;
 }
 
-function play(boards: Board[], numbers_to_draw: number[]) : number {
+function play_part1(boards: Board[], numbers_to_draw: number[]) : number {
     const numbers_drawn = new Set<number>();
     for (let num of numbers_to_draw) {
         numbers_drawn.add(num);
         for (let board of boards) {
-            const winning_numbers : number[] = board.winningSequence(numbers_drawn);
-            if (winning_numbers && winning_numbers.length > 0) {
+            const winning_sequence : number[] = board.winningSequence(numbers_drawn);
+            if (winning_sequence && winning_sequence.length > 0) {
                 return num * board.score(numbers_drawn);
             }
         }
@@ -94,13 +94,40 @@ function part1(lines : string[]) {
     const [fst, ...rest] = lines;
     const numbers_to_draw = fst.split(",").map(s => parseInt(s));
     const boards = createBoards(rest);
-    const result = play(boards, numbers_to_draw);
+    const result = play_part1(boards, numbers_to_draw);
     return result;
+}
+
+function play_part2(boards: Board[], numbers_to_draw: number[]) : number {
+    let remaining_boards = [...boards];
+    let winning_boards : Board[] = [];
+    let last_winning_round = 0;
+    for (let round = 0; round < numbers_to_draw.length; round++) {
+        for (let board of remaining_boards) {
+            const winning_squence : number[] = board.winningSequence(new Set(numbers_to_draw.slice(0, round+1)));
+            if (winning_squence && winning_squence.length > 0) {
+                last_winning_round = round;
+                winning_boards.push(board);
+            }
+        }
+        // console.log(`${numbers_to_draw[round]} drawn: ${remaining_boards.length}`);
+        remaining_boards = remaining_boards.filter(b => !winning_boards.includes(b));
+        if (remaining_boards.length == 0)
+            break;
+    }
+    const last_board = winning_boards[winning_boards.length-1];
+    const last_winning_number = numbers_to_draw[last_winning_round]
+    // console.log(last_winning_number);
+    // console.log(last_board);
+    return last_winning_number * last_board.score(new Set(numbers_to_draw.slice(0, last_winning_round+1)));
 }
 
 function part2(lines : string[]) {
-    let result = 0;
+    const [fst, ...rest] = lines;
+    const numbers_to_draw = fst.split(",").map(s => parseInt(s));
+    const boards = createBoards(rest);
+    const result = play_part2(boards, numbers_to_draw);
     return result;
 }
 
-export { part1, part2, Board, play };
+export { part1, part2, Board, play_part1, play_part2 };
