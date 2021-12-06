@@ -16,7 +16,7 @@ suite("Day04", () => {
         const board = new Board(example); 
         const numbers_drawn = new Set<number>([7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24]);
 
-        assert.deepEqual(board.winningSequence(numbers_drawn), [14, 21, 17, 24,  4]);
+        assert.deepEqual(board.winningRowOrColumn(numbers_drawn), [14, 21, 17, 24,  4]);
     });
 
     test("find winning vertical sequence", () => {
@@ -30,7 +30,7 @@ suite("Day04", () => {
         const board = new Board(example); 
         const numbers_drawn = new Set<number>([14, 10, 17, 23, 13, 15, 21, 12]);
 
-        assert.deepEqual(board.winningSequence(numbers_drawn), [17, 15, 23, 13, 12]);
+        assert.deepEqual(board.winningRowOrColumn(numbers_drawn), [17, 15, 23, 13, 12]);
     });
 
     test("example for part 1", () => {
