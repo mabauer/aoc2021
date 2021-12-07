@@ -31,7 +31,7 @@ class Swarm {
     }
 
     getNumberOfFishes() : number {
-        let sum = this.fishes_per_cycle.reduce( (sum, n) => sum + n);
+        let sum = this.fishes_per_cycle.reduce( (sum, n) => sum + n, 0);
         return sum;
     }
 }
