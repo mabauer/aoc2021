@@ -1,4 +1,9 @@
 
+export function sum(values: number[]) : number {
+    const result = values.reduce( (sum, value) => sum + value, 0);
+    return result;
+}
+
 export function list_plus<T>(l : T[], ...values : T[]) : T[] {
     const result : T[] = [...l];
     result.push(...values);
