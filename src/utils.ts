@@ -15,6 +15,10 @@ export function list_minus<T>(l : T[], ...values : T[]) : T[] {
     return result;
 }
 
+export function list_includes<T>(l: T[], value: T, equals: (x: T, y: T) => boolean) {
+    return (l.filter(o => (equals(value, o))).length > 0);
+}
+
 // Find a perfect matching for between two candidate sets defined by a map
 // The first candidate set makes up the keys, the second candidate set makes up the values of the map.
 // Example: For {'nhx': {'fish'}, 'rrjb': {'peanuts'}, 'xmhsbd': {'wheat', 'peanuts', 'fish'}} a matching is:

@@ -1,4 +1,4 @@
-import { sum } from './utils'
+import { sum, list_includes } from './utils'
 
 class Point {
 
@@ -8,6 +8,10 @@ class Point {
     constructor(x: number, y: number) {
         this.x = x; 
         this.y = y;
+    }
+
+    equals(other: Point) : boolean {
+        return (other && this.x == other.x && this.y == other.y);
     }
 }
 
@@ -67,7 +71,7 @@ class HeightMap {
 
     expandBasin(x : number, y : number, basin : Point[] = []) : number {
         const coords = new Point(x, y);
-        if (basin.filter(p => (p.x == coords.x) && (p.y == coords.y)).length > 0)
+        if (list_includes(basin, coords, (p, q) => (p.equals(q))))
             return 0;
         basin.push(coords);
         let size = 1;
