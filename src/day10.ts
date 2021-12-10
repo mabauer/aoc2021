@@ -5,16 +5,21 @@ const ERROR_UNEXPECTED_END = "\n";
 
 const EOL = "\n";
 
-class ChunkParser {
+class ChunkChecker {
 
     input : string;
     pos : number;
     token : string;
 
-    constructor(input: string) {
+    applyFixes : boolean;
+    fixes : string[];
+
+    constructor(input: string, applyFixes=false) {
         this.input = input;
         this.pos = 0;
         this.token = EOL;
+        this.fixes = [];
+        this.applyFixes = applyFixes;
     }
 
     nextToken() {
@@ -25,29 +30,53 @@ class ChunkParser {
         }
     }
     
-    // inout => ( chunk ) chunk | eps
-    parseChunk() : string {
+    // input => ( chunk ) chunk | eps
+    checkChunk() : string {
 
         if (this.token == EOL) {
             return ERROR_NONE;
         }
         if (["(", "{", "<", "["].includes(this.token)) {
             const openingToken = this.token;
+            let closingToken = "";
+            switch (openingToken) {
+                case "(": {
+                    closingToken = ")";
+                    break;
+                }
+                case "{": {
+                    closingToken = "}";
+                    break;
+                }
+                case "[": {
+                    closingToken = "]";
+                    break;
+                }
+                case "<": {
+                    closingToken = ">";
+                    break;
+                }
+            }
             this.nextToken();
-            const result = this.parseChunk();
+            const result = this.checkChunk();
             if (result != ERROR_NONE) {
                 return result;
             }          
-            if ((openingToken == "(" && this.token == ")")
-                    || (openingToken == "{" && this.token == "}")
-                    || (openingToken == "[" && this.token == "]")
-                    || (openingToken == "<" && this.token == ">") ) {
-                console.log(`Chunk ${openingToken}${this.token} done.`);
+            if (this.token == closingToken)  {
+                // console.log(`Chunk ${openingToken}${this.token} done.`);
                 this.nextToken();
-                return this.parseChunk();
+                return this.checkChunk();
             }
             else {
                 // Missing bracket!
+                if (this.applyFixes) {
+                    this.nextToken();
+                    // Only fix things, if we are at the end of the line!
+                    if (this.token == EOL) {
+                        this.fixes.push(closingToken);
+                        return this.checkChunk();
+                    }                    
+                }
                 return this.token; 
             }
         } else {
@@ -55,14 +84,14 @@ class ChunkParser {
         return ERROR_NONE;
     } 
 
-    parse() : string {
+    check() : string {
         this.nextToken();
-        let result = this.parseChunk(); 
+        let result = this.checkChunk(); 
         if (result != ERROR_NONE) {
             return result;
         }
         if (this.token != EOL) { 
-            // Unexpected opening closing brackets
+            // Unexpected opening or closing brackets
             return this.token;
         }
         else {
@@ -73,9 +102,10 @@ class ChunkParser {
 
 function part1(lines : string[]) {
     let score = 0;
+    let i = 0;
     for (let s of lines) {
-        let parser = new ChunkParser(s);
-        const result = parser.parse();
+        let checker = new ChunkChecker(s);
+        const result = checker.check();
         if (result == ")") {
             score += 3;
         }
@@ -88,14 +118,47 @@ function part1(lines : string[]) {
         if (result == ">") {
             score += 25137;
         }
+        i += 1;
     }
     return score;
 }
 
-function part2(lines : string[]) {
-    // let ints = integers(lines)
-    let result = 0;
-    return result;
+function scoreFixes(fixes : string[]) : number {
+    return fixes.reduce( (score, fix) => {
+        if (fix == ")") {
+            score = score*5 + 1;
+        }
+        if (fix == "]") {
+            score = score*5 + 2;
+        }
+        if (fix == "}") {
+            score = score*5 + 3;
+        }
+        if (fix == ">") {
+            score = score*5 + 4;
+        }
+        return score;
+    }, 0);
+
 }
 
-export { part1, part2, ChunkParser, ERROR_NONE, ERROR_UNEXPECTED_END };
+function part2(lines : string[]) {
+    lines = lines.filter(s => s.length > 0) 
+    const scores : number[] = [];
+    let i = 0;
+    for (let s of lines) {
+        let checker = new ChunkChecker(s, true);
+        const result = checker.check();
+        if (result == ERROR_NONE) {
+            console.log(`${i}: ${checker.fixes.join('')}`);
+            const score = scoreFixes(checker.fixes);
+            scores.push(score);
+        }
+        i += 1;
+    }
+    scores.sort( (a, b) => a - b );
+    const mean = scores[Math.floor(scores.length/2)];
+    return mean; // 3490802734
+}
+
+export { part1, part2, ChunkChecker, ERROR_NONE, ERROR_UNEXPECTED_END };
