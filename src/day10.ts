@@ -36,26 +36,22 @@ class ChunkChecker {
         if (this.token == EOL) {
             return ERROR_NONE;
         }
+
         if (["(", "{", "<", "["].includes(this.token)) {
+            // input => ( chunk) chunk
             const openingToken = this.token;
             let closingToken = "";
-            switch (openingToken) {
-                case "(": {
-                    closingToken = ")";
-                    break;
-                }
-                case "{": {
-                    closingToken = "}";
-                    break;
-                }
-                case "[": {
-                    closingToken = "]";
-                    break;
-                }
-                case "<": {
-                    closingToken = ">";
-                    break;
-                }
+            if (openingToken == "(") {
+                closingToken = ")";
+            }
+            else if (openingToken == "{") {
+                closingToken = "}";
+            }
+            else if (openingToken == "[") {
+                closingToken = "]";
+            }
+            else if (openingToken == "<") {
+                closingToken = ">";
             }
             this.nextToken();
             const result = this.checkChunk();
@@ -80,6 +76,7 @@ class ChunkChecker {
                 return this.token; 
             }
         } else {
+            // input => eps
         }
         return ERROR_NONE;
     } 
@@ -91,7 +88,7 @@ class ChunkChecker {
             return result;
         }
         if (this.token != EOL) { 
-            // Unexpected opening or closing brackets
+            // Unexpected remaining tokens ("unmatched" closing brackets)
             return this.token;
         }
         else {
@@ -109,13 +106,13 @@ function part1(lines : string[]) {
         if (result == ")") {
             score += 3;
         }
-        if (result == "]") {
+        else if (result == "]") {
             score += 57;
         }
-        if (result == "}") {
+        else if (result == "}") {
             score += 1197;
         }
-        if (result == ">") {
+        else if (result == ">") {
             score += 25137;
         }
         i += 1;
@@ -128,13 +125,13 @@ function scoreFixes(fixes : string[]) : number {
         if (fix == ")") {
             score = score*5 + 1;
         }
-        if (fix == "]") {
+        else if (fix == "]") {
             score = score*5 + 2;
         }
-        if (fix == "}") {
+        else if (fix == "}") {
             score = score*5 + 3;
         }
-        if (fix == ">") {
+        else if (fix == ">") {
             score = score*5 + 4;
         }
         return score;
