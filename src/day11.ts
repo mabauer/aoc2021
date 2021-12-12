@@ -1,4 +1,4 @@
-import { sum, list_includes } from './utils'
+import { sum, listIncludes, stripEmptyLines } from './utils'
 
 class Point {
 
@@ -69,7 +69,7 @@ class Swarm {
                     if (level < FLASHING) {
                         level += 1;
                         this.setxy(n.x, n.y, level);
-                        if (level == FLASHING && !list_includes(todo, n, (p1, p2) => p1.equals(p2)) ) {
+                        if (level == FLASHING && !listIncludes(todo, n, (p1, p2) => p1.equals(p2)) ) {
                             todo.push(n);
                         }
                     }
@@ -134,14 +134,14 @@ class Swarm {
 }
 
 function part1(lines : string[]) {
-    const swarm = new Swarm(lines.filter(s => s.length > 0)
+    const swarm = new Swarm(stripEmptyLines(lines)
         .map(r => r.split('').map(c => parseInt(c))));
     const flashes = swarm.play(100);
     return flashes;
 }
 
 function part2(lines : string[]) {
-    const swarm = new Swarm(lines.filter(s => s.length > 0)
+    const swarm = new Swarm(stripEmptyLines(lines)
         .map(r => r.split('').map(c => parseInt(c))));
     const gens = swarm.playUntilSynchronized();
     return gens;

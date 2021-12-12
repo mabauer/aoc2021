@@ -1,4 +1,4 @@
-// import { integers } from './utils'
+import { stripEmptyLines } from './utils'
 
 
 interface Graph {
@@ -52,15 +52,15 @@ function createGraph(edges : string[]) : Graph {
 }
 
 function part1(lines : string[]) {
-    const g = createGraph(lines.filter(s => s.length > 0));
-    console.log(g);
+    const g = createGraph(stripEmptyLines(lines));
+    // console.log(g);
     let result = dfs(g, START);
     return result;
 }
 
 function part2(lines : string[]) {
-    const g = createGraph(lines.filter(s => s.length > 0));
-    console.log(g);
+    const g = createGraph(stripEmptyLines(lines));
+    // console.log(g);
     let result = dfs(g, START, true);
     return result;
 }

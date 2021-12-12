@@ -1,3 +1,4 @@
+import { stripEmptyLines } from "./utils";
 
 
 const ERROR_NONE = "";
@@ -140,7 +141,7 @@ function scoreFixes(fixes : string[]) : number {
 }
 
 function part2(lines : string[]) {
-    lines = lines.filter(s => s.length > 0) 
+    lines = stripEmptyLines(lines); 
     const scores : number[] = [];
     let i = 0;
     for (let s of lines) {

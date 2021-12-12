@@ -1,4 +1,4 @@
-import { sum, list_includes } from './utils'
+import { sum, listIncludes, stripEmptyLines } from './utils'
 
 class Point {
 
@@ -71,7 +71,7 @@ class HeightMap {
 
     expandBasin(x : number, y : number, basin : Point[] = []) : number {
         const coords = new Point(x, y);
-        if (list_includes(basin, coords, (p, q) => (p.equals(q))))
+        if (listIncludes(basin, coords, (p, q) => (p.equals(q))))
             return 0;
         basin.push(coords);
         let size = 1;
@@ -108,7 +108,7 @@ class HeightMap {
 }
 
 function part1(lines : string[]) {
-    const map = new HeightMap(lines.filter(s => s.length > 0)
+    const map = new HeightMap(stripEmptyLines(lines)
         .map(r => r.split('').map(c => parseInt(c))));
     const lows = map.findLows();
     console.log(lows);
@@ -118,7 +118,7 @@ function part1(lines : string[]) {
 }
 
 function part2(lines : string[]) {
-    const map = new HeightMap(lines.filter(s => s.length > 0)
+    const map = new HeightMap(stripEmptyLines(lines)
     .map(r => r.split('').map(c => parseInt(c))));
     const basins = map.findBasins();
     console.log(basins);

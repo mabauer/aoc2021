@@ -1,9 +1,9 @@
 import { assert } from 'chai';
 import 'mocha';
-import { find_matching } from '../src/utils';
+import { findMatching } from '../src/utils';
 
 
-suite("find_matching", () => {
+suite("findMatching", () => {
   
     test("find possible matching", () => {
         const candidates = {
@@ -26,7 +26,7 @@ suite("find_matching", () => {
             'kfxr': 'nuts', 
             'chbtp': 'soy'
         }
-        const result = find_matching(candidates);
+        const result = findMatching(candidates);
         console.log(result);
         assert.deepEqual(result, matching);
     });
@@ -42,7 +42,7 @@ suite("find_matching", () => {
             'kfxr': ['eggs', 'peanuts', 'nuts', 'soy'],
             'chbtp': ['sesame', 'shellfish', 'fish']  // soy is missing here!
         }
-        assert.isNull(find_matching(impossible));
+        assert.isNull(findMatching(impossible));
     });
 
 });
