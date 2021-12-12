@@ -23,12 +23,13 @@ function dfs(g: Graph, node: string, allow2ndVisitOnce=false, visited: Set<strin
     }
     let paths = 0;
     for (let neighbour of g[node]) {
-        if (neighbour != START && visited.has(neighbour) && allow2ndVisitOnce) {
-            paths += dfs(g, neighbour, false, visited);
-        } 
         if (!visited.has(neighbour)) {
             paths += dfs(g, neighbour, allow2ndVisitOnce, visited);
         }
+        else if (neighbour != START && allow2ndVisitOnce) {
+            paths += dfs(g, neighbour, false, visited);
+        } 
+
     }
     return paths;
 }
