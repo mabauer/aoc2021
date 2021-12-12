@@ -8,31 +8,27 @@ interface Graph {
 const START = "start";
 const END = "end";
 
-function isLarge(node : string) : boolean {
-    return (node == node.toUpperCase());
+function isSmall(node : string) : boolean {
+    return (node == node.toLowerCase());
 }
 
-function dfs(g: Graph, node: string, visited: Set<string> = new Set()) : number {
+function dfs(g: Graph, node: string, allow2ndVisitOnce=false, visited: Set<string> = new Set()) : number {
 
     if (node == END) {
         return 1;
     }
-    console.log(`${node}:`);
-    console.log(visited);
-    if (!isLarge(node)) {
+    visited = new Set([...visited]);
+    if (isSmall(node)) {
         visited.add(node);
     }
     let paths = 0;
     for (let neighbour of g[node]) {
-        if (!visited.has(neighbour) ) {
-            const pn = dfs(g, neighbour, visited);
-            paths += pn;
-            console.log(`dfs(${neighbour})=${pn} -> ${paths}`)
-
+        if (neighbour != START && visited.has(neighbour) && allow2ndVisitOnce) {
+            paths += dfs(g, neighbour, false, visited);
+        } 
+        if (!visited.has(neighbour)) {
+            paths += dfs(g, neighbour, allow2ndVisitOnce, visited);
         }
-    }
-    if (!isLarge(node)) {
-        visited.delete(node);
     }
     return paths;
 }
@@ -62,8 +58,9 @@ function part1(lines : string[]) {
 }
 
 function part2(lines : string[]) {
-    // let ints = integers(lines)
-    let result = 0;
+    const g = createGraph(lines.filter(s => s.length > 0));
+    console.log(g);
+    let result = dfs(g, START, true);
     return result;
 }
 

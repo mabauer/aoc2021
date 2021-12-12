@@ -56,8 +56,16 @@ suite("Day12", () => {
     });
 
     test("example for part 2", () => {
-        let example = ["1", "2", "3"];
-        assert.equal(part2(example), 0);
+        let example = [ 
+            "start-A", 
+            "start-b", 
+            "A-c", 
+            "A-b", 
+            "b-d", 
+            "A-end", 
+            "b-end"
+        ];
+        assert.equal(part2(example), 36);
     });
 
 });
