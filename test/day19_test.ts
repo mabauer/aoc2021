@@ -1,6 +1,8 @@
 import { assert } from 'chai';
 import 'mocha';
-import { readScanners, part1, part2, Point3, intersect, convertToAbsolute, computeFingerPrint, rotations, rotate, compareScanners } from '../src/day19';
+import { listIntersect } from '../src/utils';
+import { rotations } from '../src/day19/rotations';
+import { readScanners, part1, part2, Point3, convertToAbsolute, allRelativeCoordinates, rotate, compareScanners } from '../src/day19';
 
 const example = [
     "--- scanner 0 ---", 
@@ -143,17 +145,17 @@ const example = [
 
 suite("Day19", () => {
   
-    test("computeFingerprint", () => {
+    test("allRelativeCoordinates", () => {
         const scan1 = [new Point3(0, 2, 0), new Point3(4, 1, 0), new Point3(3, 3, 0)];
         const scan2 = [new Point3(-1, -1, 0), new Point3(-5, 0, 0), new Point3(-2, 1, 0), new Point3(5, 7, 0)];
-        const fp1 = computeFingerPrint(scan1);
-        const fp2 = computeFingerPrint(scan2);
-        console.log(fp1);
-        console.log(fp2);
-        assert.equal(intersect(fp1, fp2).length, 6);
+        const relCoords1 = allRelativeCoordinates(scan1);
+        const relCoords2 = allRelativeCoordinates(scan2);
+        console.log(relCoords1);
+        console.log(relCoords2);
+        assert.equal(listIntersect(relCoords1, relCoords2).length, 6);
     });
 
-    test("compareScans wo Rotation", () => {
+    test("compareScanners wo rotation", () => {
         const scan1 = [new Point3(0, 2, 0), new Point3(4, 1, 0), new Point3(3, 3, 0)];
         const scan2 = [new Point3(-1, -1, 0), new Point3(-5, 0, 0), new Point3(-2, 1, 0), new Point3(5, 7, 0)];
         const result = compareScanners(scan1, scan2, 3);
@@ -164,7 +166,7 @@ suite("Day19", () => {
         }
     });
 
-    test("compareScans with Rotation", () => {
+    test("compareScanners with rotation", () => {
         const scan1 = [new Point3(0, 2, 0), new Point3(4, 1, 0), new Point3(3, 3, 0)];
         const scan2 = [new Point3(-1, -1, 0), new Point3(-5, 0, 0), new Point3(-2, 1, 0), new Point3(5, 7, 0)];
         const rotatedScan = scan2.map(p => rotate(p, rotations[2]));

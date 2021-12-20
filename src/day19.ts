@@ -1,4 +1,5 @@
-import { listIncludes, Hashable, stripEmptyLines } from './utils'
+import { listIncludes, listIntersect, Hashable, stripEmptyLines } from './utils'
+import { rotations} from './day19/rotations'
 
 class Point3 {
 
@@ -65,130 +66,6 @@ function manhattanDistance(p1: Point3, p2: Point3): number {
     return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y) + Math.abs(p1.z - p2.z);
 }
 
-const rotations = [
-    [
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1]
-    ],
-    [
-        [1, 0, 0],
-        [0, 0, -1],
-        [0, 1, 0]
-    ],
-    [
-        [1, 0, 0],
-        [0, -1, 0],
-        [0, 0, -1]
-    ],
-    [
-        [1, 0, 0],
-        [0, 0, 1],
-        [0, -1, 0]
-    ],
-    [
-        [0, -1, 0],
-        [1, 0, 0],
-        [0, 0, 1],
-    ],
-    [
-        [0, 0, 1],
-        [1, 0, 0],
-        [0, 1, 0]
-    ],
-    [
-        [0, 1, 0],
-        [1, 0, 0],
-        [0, 0, -1]
-    ],
-    [
-        [0, 0, -1],
-        [1, 0, 0],
-        [0, -1, 0]
-    ],
-    [
-        [-1, 0, 0],
-        [0, -1, 0],
-        [0, 0, 1]
-    ],
-    [
-        [-1, 0, 0],
-        [0, 0, -1],
-        [0, -1, 0]
-    ],
-    [
-        [-1, 0, 0],
-        [0, 1, 0],
-        [0, 0, -1]
-    ],
-    [
-        [-1, 0, 0],
-        [0, 0, 1],
-        [0, 1, 0]
-    ],
-    [
-        [0, 1, 0],
-        [-1, 0, 0],
-        [0, 0, 1]
-    ],
-    [
-        [0, 0, 1],
-        [-1, 0, 0],
-        [0, -1, 0]
-    ],
-    [
-        [0, -1, 0],
-        [-1, 0, 0],
-        [0, 0, -1]
-    ],
-    [
-        [0, 0, -1],
-        [-1, 0, 0],
-        [0, 1, 0]
-    ],
-    [
-        [0, 0, -1],
-        [0, 1, 0],
-        [1, 0, 0]
-    ],
-    [
-        [0, 1, 0],
-        [0, 0, 1],
-        [1, 0, 0]
-    ],
-    [
-        [0, 0, 1],
-        [0, -1, 0],
-        [1, 0, 0]
-    ],
-    [
-        [0, -1, 0],
-        [0, 0, -1],
-        [1, 0, 0]
-    ],
-    [
-        [0, 0, -1],
-        [0, -1, 0],
-        [-1, 0, 0]
-    ],
-    [
-        [0, -1, 0],
-        [0, 0, 1],
-        [-1, 0, 0]
-    ],
-    [
-        [0, 0, 1],
-        [0, 1, 0],
-        [-1, 0, 0]
-    ],
-    [
-        [0, 1, 0],
-        [0, 0, -1],
-        [-1, 0, 0]
-    ]
-];
-
-
 function rotate(p : Point3, rot: number[][]) : Point3 {
     const result = new Point3(0, 0, 0);
     for (let y = 0; y < 3; y++) {
@@ -205,23 +82,18 @@ function convertToAbsolute(points : Point3[], scanner: Scanner) : Point3[] {
     return points.map(p => vPlus(rotate(p, scanner.orientation), scanner.position));
 }
 
-function computeFingerPrint(beacons : Point3[]) : Point3[] {
+function allRelativeCoordinates(beacons : Point3[]) : Point3[] {
     const result = [];
     const todo = [...beacons];
     while (todo.length > 0) {
         const p1 = todo.pop()
         if (p1) {
             for (let p2 of todo) {
-                result.push(new Point3((p2.x - p1.x), (p2.y - p1.y), (p2.z - p1.z)));
-                result.push(new Point3((p1.x - p2.x), (p1.y - p2.y), (p1.z - p2.z)));
+                result.push(vMinus(p1, p2));
+                result.push(vMinus(p2, p1));
             }
         }
     }
-    return result;
-}
-
-function intersect <T extends Hashable> (l1: T[], l2: T[]): T[] {
-    const result = l1.filter(elem => listIncludes(l2, elem) );
     return result;
 }
 
@@ -231,11 +103,11 @@ interface Scanner {
 }
 
 function compareScanners(beacons1 : Point3[], beacons2: Point3[], minOverlap=12) : Scanner|null {
-    const fp1 = computeFingerPrint(beacons1);
+    const relCoords1 = allRelativeCoordinates(beacons1);
     for (let rot of rotations) {
         const rotatedBeacons = beacons2.map(p => rotate(p, rot));
-        const fp2 = computeFingerPrint(rotatedBeacons);
-        const overlap = intersect(fp1, fp2);
+        const relCoords2 = allRelativeCoordinates(rotatedBeacons);
+        const overlap = listIntersect(relCoords1, relCoords2);
         if (overlap.length >= minOverlap*(minOverlap-1)) {
             const diff = overlap[0];
             let r1 = new Point3(0, 0, 0);
@@ -257,7 +129,8 @@ function compareScanners(beacons1 : Point3[], beacons2: Point3[], minOverlap=12)
             // console.log(`Reference beacon: ${r1} => ${r2}`);
             const shift = vMinus(r1, rotate(r2, rot));
 
-            /* const matches = [];
+            /* 
+            const matches = [];
             for (let p2 of beacons2) {
                 const p2Transformed = vPlus(rotate(p2, rot), shift);
                 if (listIncludes(beacons1, p2Transformed)) {
@@ -331,10 +204,14 @@ function computeScanners(beacons: Point3[][]) : (Scanner|null)[] {
     return scanners;
 }
 
+let beacons : Point3[][] = [];
+let scanners : (Scanner|null)[] = [];
 
 function part1(lines : string[]) {
-    const beacons = readScanners(lines);
-    const scanners = computeScanners(beacons);
+    if (scanners.length == 0) {
+        beacons = readScanners(lines);
+        scanners = computeScanners(beacons);    
+    }
     const uniques = [];
     for (let s = 0; s < beacons.length; s++) {
         const scanner = scanners[s];
@@ -354,8 +231,10 @@ function part1(lines : string[]) {
 }
 
 function part2(lines : string[]) {
-    const beacons = readScanners(lines);
-    const scanners = computeScanners(beacons);
+    if (scanners.length == 0) {
+        beacons = readScanners(lines);
+        scanners = computeScanners(beacons);    
+    }
     const distances = [];
     for (const s1 of scanners) {
         for (const s2 of scanners) {
@@ -367,4 +246,4 @@ function part2(lines : string[]) {
     return Math.max(...distances);
 }
 
-export { readScanners, part1, part2, Point3, intersect, convertToAbsolute, computeFingerPrint, compareScanners, rotations, rotate };
+export { readScanners, part1, part2, Point3, convertToAbsolute, allRelativeCoordinates, compareScanners, rotate };
