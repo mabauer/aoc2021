@@ -1,8 +1,6 @@
 import { assert } from 'chai';
 import 'mocha';
-import { readScanners, part1, part2, Point3, intersect, convertToAbsolute, computeFingerPrint, rotations, rotate, compareScans } from '../src/day19';
-
-
+import { readScanners, part1, part2, Point3, intersect, convertToAbsolute, computeFingerPrint, rotations, rotate, compareScanners } from '../src/day19';
 
 const example = [
     "--- scanner 0 ---", 
@@ -158,7 +156,7 @@ suite("Day19", () => {
     test("compareScans wo Rotation", () => {
         const scan1 = [new Point3(0, 2, 0), new Point3(4, 1, 0), new Point3(3, 3, 0)];
         const scan2 = [new Point3(-1, -1, 0), new Point3(-5, 0, 0), new Point3(-2, 1, 0), new Point3(5, 7, 0)];
-        const result = compareScans(scan1, scan2, 3);
+        const result = compareScanners(scan1, scan2, 3);
         if (result) {
             console.log(result);
             assert.deepEqual(result.orientation, [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]);
@@ -170,7 +168,7 @@ suite("Day19", () => {
         const scan1 = [new Point3(0, 2, 0), new Point3(4, 1, 0), new Point3(3, 3, 0)];
         const scan2 = [new Point3(-1, -1, 0), new Point3(-5, 0, 0), new Point3(-2, 1, 0), new Point3(5, 7, 0)];
         const rotatedScan = scan2.map(p => rotate(p, rotations[2]));
-        const result = compareScans(scan1, rotatedScan, 3);
+        const result = compareScanners(scan1, rotatedScan, 3);
         if (result) {
             console.log(result);
             assert.deepEqual(result.orientation, [ [ 1, 0, 0 ], [ 0, -1, 0 ], [ 0, 0, -1 ] ]);
@@ -181,7 +179,7 @@ suite("Day19", () => {
     test("compareScans for scanners 0, 1 from example", () => {
         const beacons = readScanners(example);
         console.log(beacons);
-        const result = compareScans(beacons[0], beacons[1]);
+        const result = compareScanners(beacons[0], beacons[1]);
         console.log(result);
         assert.exists(result);
         if (result) {  
@@ -197,18 +195,13 @@ suite("Day19", () => {
             position: new Point3(68, -1246, -43 ),
             orientation : [ [ -1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, -1 ] ]
         };
-        const result = compareScans(convertToAbsolute(beacons[1], scanner1), beacons[4]);
+        const result = compareScanners(convertToAbsolute(beacons[1], scanner1), beacons[4]);
         console.log(result);
         assert.exists(result);
         if (result) {  
             console.log(result);
             assert.deepEqual(result.orientation,  [ [ 0, -1, 0 ], [ 0, 0, -1 ], [ 1, 0, 0 ] ]);
             assert.isTrue(result.position.equals(new Point3(-20, -1133, 1061 ))); 
-            /* 
-                for (let beacon of result.matches) {
-                console.log(rotate(beacon, [[ -1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, -1 ]]).plus(new Point3(68, -1246, -43 )));
-            }
-            */
         }
 
     });
