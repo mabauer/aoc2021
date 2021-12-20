@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import 'mocha';
-import { part1, part2, Board, play_part1, play_part2 } from '../src/day04';
+import { part1, part2, Board, playPart1, playPart2 } from '../src/day04';
 
 
 suite("Day04", () => {
@@ -60,7 +60,7 @@ suite("Day04", () => {
         boards.push(new Board(example1));
         boards.push(new Board(example2));
         boards.push(new Board(example3));
-        const result = play_part1(boards, numbers_to_draw);
+        const result = playPart1(boards, numbers_to_draw);
         assert.equal(result, 4512);
     });
 
@@ -91,7 +91,7 @@ suite("Day04", () => {
         boards.push(new Board(example1));
         boards.push(new Board(example2));
         boards.push(new Board(example3));
-        const result = play_part2(boards, numbers_to_draw);
+        const result = playPart2(boards, numbers_to_draw);
         assert.equal(result, 1924);
     });
 

@@ -42,7 +42,7 @@ enum STRATEGY {
     LEAST_COMMON,
 }
 
-function compute_rating(lines : string[], strategy=STRATEGY.MOST_COMMON) {
+function computeRating(lines : string[], strategy=STRATEGY.MOST_COMMON) {
     let remaining = lines.filter(l => l.length > 0);
     const len = remaining[0].length;
     for (let i = 0; i < len; i++) {
@@ -82,8 +82,8 @@ function compute_rating(lines : string[], strategy=STRATEGY.MOST_COMMON) {
 }
 
 function part2(lines : string[]) {
-    const o2_generator_rate = compute_rating(lines, STRATEGY.MOST_COMMON);
-    const co2_scrubber_rate = compute_rating(lines, STRATEGY.LEAST_COMMON);
+    const o2_generator_rate = computeRating(lines, STRATEGY.MOST_COMMON);
+    const co2_scrubber_rate = computeRating(lines, STRATEGY.LEAST_COMMON);
     return o2_generator_rate * co2_scrubber_rate;
 }
 

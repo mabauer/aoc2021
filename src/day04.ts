@@ -82,7 +82,7 @@ function createBoards(lines: string[]) {
     return boards;
 }
 
-function play_part1(boards: Board[], numbers_to_draw: number[]) : number {
+function playPart1(boards: Board[], numbers_to_draw: number[]) : number {
     const numbers_drawn = new Set<number>();
     for (let num of numbers_to_draw) {
         numbers_drawn.add(num);
@@ -99,11 +99,11 @@ function part1(lines : string[]) {
     const [fst, ...rest] = lines;
     const numbers_to_draw = fst.split(",").map(s => parseInt(s));
     const boards = createBoards(rest);
-    const result = play_part1(boards, numbers_to_draw);
+    const result = playPart1(boards, numbers_to_draw);
     return result;
 }
 
-function play_part2(boards: Board[], numbers_to_draw: number[]) : number {
+function playPart2(boards: Board[], numbers_to_draw: number[]) : number {
     let boards_remaining = [...boards];
     let boards_won : Board[] = [];
     let last_winning_round = 0;
@@ -130,8 +130,8 @@ function part2(lines : string[]) {
     const [fst, ...rest] = lines;
     const numbers_to_draw = fst.split(",").map(s => parseInt(s));
     const boards = createBoards(rest);
-    const result = play_part2(boards, numbers_to_draw);
+    const result = playPart2(boards, numbers_to_draw);
     return result;
 }
 
-export { part1, part2, Board, play_part1, play_part2 };
+export { part1, part2, Board, playPart1, playPart2 };

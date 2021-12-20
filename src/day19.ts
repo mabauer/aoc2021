@@ -54,11 +54,11 @@ function createPointFromList(coords: number[]) : Point3 {
     return new Point3(x, y, z);
 }
 
-function vPlus(p1: Point3, p2: Point3) : Point3 {
+function vectorPlus(p1: Point3, p2: Point3) : Point3 {
     return new Point3(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z);
 }
 
-function vMinus(p1: Point3, p2: Point3) : Point3 {
+function vectorMinus(p1: Point3, p2: Point3) : Point3 {
     return new Point3(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z);
 }
 
@@ -79,7 +79,7 @@ function rotate(p : Point3, rot: number[][]) : Point3 {
 }
 
 function convertToAbsolute(points : Point3[], scanner: Scanner) : Point3[] {
-    return points.map(p => vPlus(rotate(p, scanner.orientation), scanner.position));
+    return points.map(p => vectorPlus(rotate(p, scanner.orientation), scanner.position));
 }
 
 function allRelativeCoordinates(beacons : Point3[]) : Point3[] {
@@ -89,8 +89,8 @@ function allRelativeCoordinates(beacons : Point3[]) : Point3[] {
         const p1 = todo.pop()
         if (p1) {
             for (let p2 of todo) {
-                result.push(vMinus(p1, p2));
-                result.push(vMinus(p2, p1));
+                result.push(vectorMinus(p1, p2));
+                result.push(vectorMinus(p2, p1));
             }
         }
     }
@@ -113,7 +113,7 @@ function compareScanners(beacons1 : Point3[], beacons2: Point3[], minOverlap=12)
             let r1 = new Point3(0, 0, 0);
             for (let p1 of beacons1) {
                 for (let p2 of beacons1) {
-                    if (vMinus(p1, diff).equals(p2) ) {
+                    if (vectorMinus(p1, diff).equals(p2) ) {
                         r1 = p1;
                     }
                 }
@@ -121,13 +121,13 @@ function compareScanners(beacons1 : Point3[], beacons2: Point3[], minOverlap=12)
             let r2 = new Point3(0, 0, 0);
             for (let p1 of beacons2) {
                 for (let p2 of beacons2) {
-                    if (vMinus(rotate(p1, rot), diff).equals(rotate(p2, rot))) {
+                    if (vectorMinus(rotate(p1, rot), diff).equals(rotate(p2, rot))) {
                         r2 = p1;
                     }
                 }
             }
             // console.log(`Reference beacon: ${r1} => ${r2}`);
-            const shift = vMinus(r1, rotate(r2, rot));
+            const shift = vectorMinus(r1, rotate(r2, rot));
 
             /* 
             const matches = [];
