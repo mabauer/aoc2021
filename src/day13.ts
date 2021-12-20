@@ -13,6 +13,11 @@ class Point {
     equals(other: Point) : boolean {
         return (other && this.x == other.x && this.y == other.y);
     }
+
+    get hashCode() : number {
+        return 31 * (31*7 + this.x) + this.y;
+
+    }
 }
 
 function parseDots(lines: string[]) : Point[] {
@@ -34,14 +39,14 @@ function foldDots(axis: string, pos: number, dots: Point[]) {
         const foldedDot = new Point(dot.x, dot.y)
         if ((axis == "x") && (dot.x > pos)) {
             foldedDot.x = pos - (foldedDot.x - pos);
-            if (!listIncludes(dots, foldedDot, (p1, p2) => p1.equals(p2))) {
+            if (!listIncludes(dots, foldedDot)) {
                 dots.push(foldedDot);
             }
             dots.splice(dots.indexOf(dot), 1);
         }
         if ((axis == "y") && (dot.y > pos)) {
             foldedDot.y = pos - (foldedDot.y - pos);
-            if (!listIncludes(dots, foldedDot, (p1, p2) => p1.equals(p2))) {
+            if (!listIncludes(dots, foldedDot)) {
                 dots.push(foldedDot);
             }
             dots.splice(dots.indexOf(dot), 1);

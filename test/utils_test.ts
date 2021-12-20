@@ -17,14 +17,14 @@ suite("findMatching", () => {
             'chbtp': ['sesame', 'shellfish', 'fish', 'soy']
         }
         const matching = {
-            'cqvc': 'wheat', 
-            'nhx': 'fish', 
-            'rrjb': 'sesame', 
-            'xmhsbd': 'peanuts', 
-            'ntft': 'eggs', 
-            'xzhxj': 'shellfish', 
-            'kfxr': 'nuts', 
-            'chbtp': 'soy'
+            'cqvc': ['wheat'], 
+            'nhx': ['fish'], 
+            'rrjb': ['sesame'], 
+            'xmhsbd': ['peanuts'], 
+            'ntft': ['eggs'], 
+            'xzhxj': ['shellfish'], 
+            'kfxr': ['nuts'], 
+            'chbtp': ['soy']
         }
         const result = findMatching(candidates);
         console.log(result);

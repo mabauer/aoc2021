@@ -13,6 +13,11 @@ class Point {
     equals(other: Point) : boolean {
         return (other && this.x == other.x && this.y == other.y);
     }
+
+    get hashCode() : number {
+        return 31 * (31*7 + this.x) + this.y;
+
+    }
 }
 
 class HeightMap {
@@ -71,7 +76,7 @@ class HeightMap {
 
     expandBasin(x : number, y : number, basin : Point[] = []) : number {
         const coords = new Point(x, y);
-        if (listIncludes(basin, coords, (p, q) => (p.equals(q))))
+        if (listIncludes(basin, coords))
             return 0;
         basin.push(coords);
         let size = 1;

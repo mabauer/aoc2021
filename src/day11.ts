@@ -13,6 +13,11 @@ class Point {
     equals(other: Point) : boolean {
         return (other && this.x == other.x && this.y == other.y);
     }
+
+    get hashCode() : number {
+        return 31 * (31*7 + this.x) + this.y;
+
+    }
 }
 
 const FLASHING = 10;
@@ -69,7 +74,7 @@ class Swarm {
                     if (level < FLASHING) {
                         level += 1;
                         this.setxy(n.x, n.y, level);
-                        if (level == FLASHING && !listIncludes(todo, n, (p1, p2) => p1.equals(p2)) ) {
+                        if (level == FLASHING && !listIncludes(todo, n) ) {
                             todo.push(n);
                         }
                     }
