@@ -93,16 +93,21 @@ function createImageFromInput(rows : string[]) : Image {
     return image;
 }
 
-function part1(lines : string[]) {
-    const [enhancementString, ...data] = lines;
-    const image = createImageFromInput(stripEmptyLines(data));
+function applyEnhancements(enhancementString: string, image: Image, n: number) : Image {
     let enhancedImage = image; 
     console.log(enhancedImage.toString());
-    for (let i = 1; i <= 2; i++) {
+    for (let i = 1; i <= n; i++) {
         const edge = (enhancementString[0] == "#")? ((i-1) % 2) : 0;
         enhancedImage = enhancedImage.computeEnhancedImage(enhancementString, edge);
         console.log(enhancedImage.toString());
     }
+    return enhancedImage;
+}
+
+function part1(lines : string[]) {
+    const [enhancementString, ...data] = lines;
+    const image = createImageFromInput(stripEmptyLines(data));
+    const enhancedImage = applyEnhancements(enhancementString, image, 2);
     const result = enhancedImage.countLitPixels();
     return result;
 }
@@ -110,13 +115,7 @@ function part1(lines : string[]) {
 function part2(lines : string[]) {
     const [enhancementString, ...data] = lines;
     const image = createImageFromInput(stripEmptyLines(data));
-    let enhancedImage = image; 
-    console.log(enhancedImage.toString());
-    for (let i = 1; i <= 50; i++) {
-        const edge = (enhancementString[0] == "#")? ((i-1) % 2) : 0;
-        enhancedImage = enhancedImage.computeEnhancedImage(enhancementString, edge);
-        console.log(enhancedImage.toString());
-    }
+    const enhancedImage = applyEnhancements(enhancementString, image, 50);
     const result = enhancedImage.countLitPixels();
     return result;
 }
