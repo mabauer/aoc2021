@@ -5,6 +5,7 @@ class Image {
     dimX: number;
     dimY : number;
     cells : number[][] = [];
+    edge : number;
 
     constructor(rows: number[][]) {
         this.dimX = rows[0].length;
@@ -15,16 +16,16 @@ class Image {
                 this.cells[y][x] = rows[y][x];
             }
         }
+        this.edge = 0;
     }
 
-    getxy(x: number, y: number, edge: number) : number {
+    getxy(x: number, y: number) : number {
         if ((y >= 0) && (y < this.dimY) 
                 && (x >= 0) && (x < this.dimX)) {
-            // console.log(`${x},${y}: ${this.cells[y][x]}`);
             return this.cells[y][x];
         }
         else {
-            return edge;
+            return this.edge;
         }        
     }
 
@@ -32,11 +33,11 @@ class Image {
         this.cells[y][x] = value;
     }
 
-    getBinaryStringForPixel(x: number, y: number, edge: number) : string {
+    getBinaryStringForPixel(x: number, y: number) : string {
         const result = [];
         for (let j = y-1; j <= y+1; j++ ) {
             for (let i = x-1; i <= x+1; i++) {
-                const value = this.getxy(i, j, edge);
+                const value = this.getxy(i, j);
                 if ( value > 0) {
                     result.push("1");
                 }
@@ -48,13 +49,21 @@ class Image {
         return result.join("");
     }
 
-    computeEnhancedImage(enhancementString: string, edge: number = 0) : Image {
+    computeEnhancedImage(enhancementString: string) : Image {
         const result = createBlankImage(this.dimX+2, this.dimY+2);
+
+        // Compute new edge
+        let binaryString = this.getBinaryStringForPixel(-10, -10);
+        let index = parseInt(binaryString, 2);
+        let value = (enhancementString[index]=="#")? 1: 0;
+        result.edge = value;
+
+        // Compute inner part
         for (let y = 0; y < this.dimY+2; y++) {
             for (let x = 0; x < this.dimY+2; x++) {
-                const binaryString = this.getBinaryStringForPixel(x-1, y-1, edge);
-                const index = parseInt(binaryString, 2);
-                const value = (enhancementString[index]=="#")? 1: 0;
+                binaryString = this.getBinaryStringForPixel(x-1, y-1);
+                index = parseInt(binaryString, 2);
+                value = (enhancementString[index]=="#")? 1: 0;
                 result.setxy(x, y, value);
             }
         }
@@ -97,8 +106,7 @@ function applyEnhancements(enhancementString: string, image: Image, n: number) :
     let enhancedImage = image; 
     console.log(enhancedImage.toString());
     for (let i = 1; i <= n; i++) {
-        const edge = (enhancementString[0] == "#")? ((i-1) % 2) : 0;
-        enhancedImage = enhancedImage.computeEnhancedImage(enhancementString, edge);
+        enhancedImage = enhancedImage.computeEnhancedImage(enhancementString);
         console.log(enhancedImage.toString());
     }
     return enhancedImage;
