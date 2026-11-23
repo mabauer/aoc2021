@@ -14,9 +14,11 @@ class Point {
         return (other && this.x == other.x && this.y == other.y);
     }
 
-    get hashCode() : number {
-        return 31 * (31*7 + this.x) + this.y;
-
+    // Fixed (found when porting to tinyscript): was 31 * (31*7 + this.x) + this.y, which is not
+    // unique ((x, y) and (x+1, y-31) have the same hash code), so different points counted as
+    // equal. In day 13, dots got lost when folding (part 1: 712 instead of 720).
+    get hashCode() : string {
+        return `${this.x},${this.y}`;
     }
 }
 

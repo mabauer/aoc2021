@@ -39,9 +39,10 @@ class Point3 {
         return (other && this.x == other.x && this.y == other.y && this.z == other.z);
     }
 
-    get hashCode() : number {
-        // TODO: number != int!
-        return 31 * (31 * (31*7 + this.x) + this.y) + this.z;
+    // Fixed (found when porting to tinyscript): was 31 * (31 * (31*7 + this.x) + this.y) + this.z,
+    // which is not unique, so different points could count as equal.
+    get hashCode() : string {
+        return `${this.x},${this.y},${this.z}`;
     }
 
     toString() : string {
@@ -204,14 +205,25 @@ function computeScanners(beacons: Point3[][]) : (Scanner|null)[] {
     return scanners;
 }
 
-let beacons : Point3[][] = [];
-let scanners : (Scanner|null)[] = [];
+// Fixed (found when porting to tinyscript): beacons and scanners were variables of the module that
+// part1 and part2 filled on their first call, so after that both ignored their argument
+// lines, and part2 depended on whether part1 ran. The cache of the expensive computeScanners
+// is now keyed by the input.
+const analyzed = new Map<string, { beacons: Point3[][], scanners: (Scanner|null)[] }>();
+
+function analyze(lines : string[]) {
+    const key = lines.join("\n");
+    let result = analyzed.get(key);
+    if (!result) {
+        const beacons = readScanners(lines);
+        result = { beacons: beacons, scanners: computeScanners(beacons) };
+        analyzed.set(key, result);
+    }
+    return result;
+}
 
 function part1(lines : string[]) {
-    if (scanners.length == 0) {
-        beacons = readScanners(lines);
-        scanners = computeScanners(beacons);    
-    }
+    const { beacons, scanners } = analyze(lines);
     const uniques = [];
     for (let s = 0; s < beacons.length; s++) {
         const scanner = scanners[s];
@@ -231,10 +243,7 @@ function part1(lines : string[]) {
 }
 
 function part2(lines : string[]) {
-    if (scanners.length == 0) {
-        beacons = readScanners(lines);
-        scanners = computeScanners(beacons);    
-    }
+    const { scanners } = analyze(lines);
     const distances = [];
     for (const s1 of scanners) {
         for (const s2 of scanners) {

@@ -65,6 +65,8 @@ class Board {
     }
 }
 
+// Fixed (found when porting to tinyscript): an empty board was added for the blank line after the
+// numbers, and the last board only if the input ended with a blank line.
 function createBoards(lines: string[]) {
     const boards : Board[] = [];
     let rows = [];
@@ -73,11 +75,13 @@ function createBoards(lines: string[]) {
             const row = s.trim().split(/\s+/).map(s => parseInt(s));
             rows.push(row);
         }
-        else {
-            // console.log(rows);
+        else if (rows.length > 0) {
             boards.push(new Board(rows));
             rows = [];
         }
+    }
+    if (rows.length > 0) {
+        boards.push(new Board(rows));
     }
     return boards;
 }

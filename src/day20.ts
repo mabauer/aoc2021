@@ -59,8 +59,10 @@ class Image {
         result.edge = value;
 
         // Compute inner part
+        // Fixed (found when porting to tinyscript): the inner loop used dimY, which only works
+        // for square images.
         for (let y = 0; y < this.dimY+2; y++) {
-            for (let x = 0; x < this.dimY+2; x++) {
+            for (let x = 0; x < this.dimX+2; x++) {
                 binaryString = this.getBinaryStringForPixel(x-1, y-1);
                 index = parseInt(binaryString, 2);
                 value = (enhancementString[index]=="#")? 1: 0;
