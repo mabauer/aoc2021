@@ -11,6 +11,10 @@ To run a solution:
 
     src/aoc <day>, where day = 1...25
 
+To run the tests (with the examples from the puzzles):
+
+    npm test
+
 Here is an overview on the puzzles:
 
 * Day 01: *Sonar Sweep*: Analyze the depth measurements of the submarine's sonar -- basic list processing, in part 2 using a *sliding window*.
